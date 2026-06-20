@@ -9,12 +9,12 @@ xgboost>=2.0
 imbalanced-learn
 
 # ── Deep Learning (LSTM) ──────────────────────────────────────────────────────
-tensorflow>=2.13
+# tensorflow>=2.13 (Commented out for Streamlit Cloud deployment)
 
 # ── NLP (Hugging Face) ────────────────────────────────────────────────────────
-transformers>=4.35
-torch>=2.0
-sentencepiece
+# transformers>=4.35 (Commented out for Streamlit Cloud deployment)
+# torch>=2.0
+# sentencepiece
 
 # ── Dashboard & Visualisation ─────────────────────────────────────────────────
 streamlit>=1.28
