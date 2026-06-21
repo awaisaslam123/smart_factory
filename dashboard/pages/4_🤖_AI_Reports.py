@@ -56,7 +56,7 @@ def load_health():
 @st.cache_data(ttl=300)
 def load_predictions():
     if os.path.exists(PREDICT_CSV):
-        cols = ["Order Region","Predicted_Delay","Delay_Probability","Shipping Mode"]
+        cols = ["order_region","predicted_late","delay_probability","shipping_mode"]
         available = pd.read_csv(PREDICT_CSV, nrows=1).columns.tolist()
         use_cols = [c for c in cols if c in available]
         return pd.read_csv(PREDICT_CSV, usecols=use_cols)
@@ -65,10 +65,10 @@ def load_predictions():
     modes   = ["Standard Class","Second Class","First Class","Same Day"]
     n = 500
     return pd.DataFrame({
-        "Order Region":     np.random.choice(regions, n),
-        "Shipping Mode":    np.random.choice(modes, n),
-        "Predicted_Delay":  np.random.choice([0,1], n, p=[0.65,0.35]),
-        "Delay_Probability":np.random.beta(2,4,n).round(4),
+        "order_region":     np.random.choice(regions, n),
+        "shipping_mode":    np.random.choice(modes, n),
+        "predicted_late":   np.random.choice([0,1], n, p=[0.65,0.35]),
+        "delay_probability":np.random.beta(2,4,n).round(4),
     })
 
 health_df = load_health()
@@ -80,7 +80,7 @@ st.divider()
 
 # ── Risk Score Meter ──────────────────────────────────────────────────────────
 maint_risk = health_df["failure_probability"].mean()
-sc_risk    = pred_df["Predicted_Delay"].mean() if "Predicted_Delay" in pred_df.columns else 0.3
+sc_risk    = pred_df["predicted_late"].mean() if "predicted_late" in pred_df.columns else 0.3
 overall    = round((maint_risk * 0.5 + sc_risk * 0.5) * 100, 1)
 
 if overall >= 55:
@@ -130,15 +130,15 @@ if generate or st.session_state.get("auto_generated"):
             elif report_type == "Supply Chain Only":
                 text = build_supply_chain_report(pred_df)
                 briefing = {"supply_chain_summary": text, "date": datetime.now().strftime("%A, %d %B %Y"),
-                            "overall_risk_score": overall, "total_alerts": int(pred_df["Predicted_Delay"].sum() if "Predicted_Delay" in pred_df.columns else 0)}
+                            "overall_risk_score": overall, "total_alerts": int(pred_df["predicted_late"].sum() if "predicted_late" in pred_df.columns else 0)}
             else:
                 briefing = build_daily_briefing(health_df, pred_df)
             st.session_state["last_briefing"] = briefing
         except Exception as e:
             # Graceful fallback without HF
             critical_m = health_df[health_df["severity"]=="CRITICAL"]
-            delay_rate = pred_df["Predicted_Delay"].mean() if "Predicted_Delay" in pred_df.columns else 0.3
-            delayed_n  = int(pred_df["Predicted_Delay"].sum()) if "Predicted_Delay" in pred_df.columns else 150
+            delay_rate = pred_df["predicted_late"].mean() if "predicted_late" in pred_df.columns else 0.3
+            delayed_n  = int(pred_df["predicted_late"].sum()) if "predicted_late" in pred_df.columns else 150
 
             maint_text = (
                 f"The Lahore Textile Plant currently monitors **{len(health_df)} machines** with an average health score of "
@@ -172,7 +172,7 @@ if "last_briefing" in st.session_state:
                 f"**Generated:** {b.get('generated_at','')[:19]}")
 
     if "maintenance_summary" in b:
-        st.markdown("#### 🏭 Predictive Maintenance Summary")
+        st.markdown("#### 🏭 Factory Operations Summary")
         st.markdown(f'<div class="report-box">{b["maintenance_summary"]}</div>', unsafe_allow_html=True)
 
     if "supply_chain_summary" in b:

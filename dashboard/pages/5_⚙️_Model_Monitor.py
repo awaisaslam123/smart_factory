@@ -51,73 +51,36 @@ for i, (name, val) in enumerate(metric_list):
     </div>""", unsafe_allow_html=True)
 
 if os.path.exists(EVAL_IMG):
-    st.image(EVAL_IMG, caption="XGBoost Evaluation: Confusion Matrix | ROC Curve | Feature Importance", use_column_width=True)
-
-st.divider()
-
-# ── LSTM Metrics ──────────────────────────────────────────────────────────────
-st.markdown("## 🧠 LSTM — Predictive Maintenance Model")
-
-lstm_status = "✅ Trained" if os.path.exists(os.path.join(BASE,"models","saved","lstm_model.keras")) else "⚠️ Not yet trained"
-st.markdown(f"**Status:** {lstm_status}")
-
-if "Not yet trained" in lstm_status:
-    st.info("Run `python models/lstm_maintenance.py` to train the LSTM model on sensor telemetry.")
-
-lstm_cols = st.columns(4)
-lstm_m = {"AUC-ROC": 0.94, "F1 Score": 0.87, "Precision": 0.85, "Recall": 0.89}
-for i, (name, val) in enumerate(lstm_m.items()):
-    lstm_cols[i].markdown(f"""<div class="card">
-        <div style="color:#aaa;font-size:.8rem">LSTM {name}</div>
-        <div class="val" style="color:#a371f7">{val:.2f}</div>
-    </div>""", unsafe_allow_html=True)
+    st.image(EVAL_IMG, caption="XGBoost Evaluation: Confusion Matrix | ROC Curve | Feature Importance", use_container_width=True)
 
 st.divider()
 
 # ── Feature Importance ────────────────────────────────────────────────────────
 st.markdown("## 📊 Feature Intelligence")
-tab1, tab2 = st.tabs(["XGBoost Feature Importance", "LSTM Sensor Importance"])
 
-with tab1:
-    features = {
-        "Days for Shipment (Scheduled)": 0.28,
-        "Shipping Mode": 0.19,
-        "Order Region": 0.16,
-        "Sales per Customer": 0.13,
-        "Category Name": 0.10,
-        "Order Quantity": 0.08,
-        "Is Weekend Order": 0.06,
-    }
-    feat_df = pd.DataFrame(list(features.items()), columns=["Feature","Importance"]).sort_values("Importance")
-    fig_feat = go.Figure(go.Bar(
-        x=feat_df["Importance"], y=feat_df["Feature"],
-        orientation="h",
-        marker=dict(color=feat_df["Importance"], colorscale="Viridis")
-    ))
-    fig_feat.update_layout(
-        plot_bgcolor="#0d1117", paper_bgcolor="#0d1117",
-        font=dict(color="#e6edf3"), height=320,
-        xaxis=dict(gridcolor="#21262d", title="Importance Score"),
-        yaxis=dict(gridcolor="#21262d"),
-        margin=dict(l=10,r=20,t=20,b=40)
-    )
-    st.plotly_chart(fig_feat, use_container_width=True)
-
-with tab2:
-    sensors = {"Vibration": 0.32, "Temperature": 0.27, "Current": 0.18, "Pressure": 0.14, "RPM": 0.09}
-    s_df = pd.DataFrame(list(sensors.items()), columns=["Sensor","Weight"]).sort_values("Weight")
-    fig_s = go.Figure(go.Bar(
-        x=s_df["Weight"], y=s_df["Sensor"], orientation="h",
-        marker=dict(color=s_df["Weight"], colorscale="Plasma")
-    ))
-    fig_s.update_layout(
-        plot_bgcolor="#0d1117", paper_bgcolor="#0d1117",
-        font=dict(color="#e6edf3"), height=250,
-        xaxis=dict(gridcolor="#21262d", title="LSTM Attention Weight"),
-        yaxis=dict(gridcolor="#21262d"),
-        margin=dict(l=10,r=20,t=20,b=40)
-    )
-    st.plotly_chart(fig_s, use_container_width=True)
+features = {
+    "Days for Shipment (Scheduled)": 0.28,
+    "Shipping Mode": 0.19,
+    "Order Region": 0.16,
+    "Sales per Customer": 0.13,
+    "Category Name": 0.10,
+    "Order Quantity": 0.08,
+    "Is Weekend Order": 0.06,
+}
+feat_df = pd.DataFrame(list(features.items()), columns=["Feature","Importance"]).sort_values("Importance")
+fig_feat = go.Figure(go.Bar(
+    x=feat_df["Importance"], y=feat_df["Feature"],
+    orientation="h",
+    marker=dict(color=feat_df["Importance"], colorscale="Viridis")
+))
+fig_feat.update_layout(
+    plot_bgcolor="#0d1117", paper_bgcolor="#0d1117",
+    font=dict(color="#e6edf3"), height=320,
+    xaxis=dict(gridcolor="#21262d", title="Importance Score"),
+    yaxis=dict(gridcolor="#21262d"),
+    margin=dict(l=10,r=20,t=20,b=40)
+)
+st.plotly_chart(fig_feat, use_container_width=True)
 
 st.divider()
 
