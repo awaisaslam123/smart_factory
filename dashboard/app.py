@@ -1,10 +1,9 @@
 """
 AI Smart Factory Intelligence Platform — Main Dashboard
 =======================================================
-Upgraded with:
-  - LSTM Predictive Maintenance
+Modules:
   - Hugging Face NLP Report Generator
-  - 4 pages: Historical | Risk Radar | Maintenance | AI Reports | Model Monitor
+  - Pages: Historical | Risk Radar | AI Reports | Model Monitor
 
 Run: streamlit run dashboard/app.py
 """
@@ -24,7 +23,6 @@ Welcome to the Smart Factory ecosystem. Please select a module from the sidebar 
 
 - **📊 Logistics Spend**: Analyze raw material shipping costs and regional spend.
 - **🎯 Risk Radar**: XGBoost-powered predictive delay detection for logistics.
-- **🔮 Predictive Maintenance**: LSTM machine failure forecasting for looms and motors.
 - **🤖 AI Reports**: HuggingFace NLP executive reports.
 - **⚙️ Model Monitor**: Accuracy metrics and drift detection.
 """)
